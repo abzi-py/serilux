@@ -19,12 +19,18 @@ Added
 - **Automatic Callable Handling**: Serializable objects automatically serialize callable fields
 - **Expression Extraction**: Extract lambda expressions and function bodies from source code
 - **Registry-Based Method Deserialization**: Methods can be deserialized using ObjectRegistry
+- **Deeply Nested Container Support**: Full support for arbitrarily deep nesting of containers (dict -> list -> dict -> Serializable, etc.)
+- **Automatic Registration for Single Object Fields**: Single object fields (not in containers) are now automatically registered in Phase 2
 
 Enhanced
 ~~~~~~~~
 
 - **Serializable.deserialize**: Now supports ``registry`` parameter for callable deserialization
-- **Serializable.serialize**: Automatically handles callable objects in fields
+- **Serializable.serialize**: Recursively handles nested containers at any depth, automatically serializing Serializable objects
+- **Serializable._serialize_value**: Now recursively processes nested dicts and lists
+- **Phase 1 Deserialization**: Recursively finds and registers all Serializable objects in nested structures
+- **Phase 2 Deserialization**: Automatically registers single object fields immediately after creation
+- **deserialize_item**: Checks registry first before creating new objects, ensuring pre-registered objects are reused
 - **Error Messages**: Improved error messages for missing classes and deserialization failures
 
 Changed

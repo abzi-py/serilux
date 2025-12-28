@@ -47,6 +47,123 @@ Serilux handles lists and dictionaries containing Serializable objects:
 
    data = team.serialize()
 
+Deeply Nested Container Structures
+-----------------------------------
+
+Serilux supports arbitrarily deep nesting of containers (dicts and lists) containing Serializable objects.
+The serialization and deserialization process recursively handles nested structures at any depth.
+
+**Example: Dict -> List -> Dict -> Serializable**
+
+.. code-block:: python
+
+   @register_serializable
+   class Person(Serializable):
+       def __init__(self):
+           super().__init__()
+           self._id = None
+           self.name = ""
+           self.age = 0
+           self.add_serializable_fields(["_id", "name", "age"])
+
+   @register_serializable
+   class Team(Serializable):
+       def __init__(self):
+           super().__init__()
+           self._id = None
+           self.name = ""
+           # Structure: departments[dept_name][role] = [Person, Person, ...]
+           self.departments = {}
+           self.add_serializable_fields(["_id", "name", "departments"])
+
+   team = Team()
+   team._id = "team1"
+   team.name = "Engineering"
+
+   person1 = Person()
+   person1._id = "p1"
+   person1.name = "Alice"
+   person1.age = 30
+
+   # Nested structure: dict -> dict -> list -> Serializable
+   team.departments = {
+       "backend": {
+           "senior": [person1],
+           "junior": [person2]
+       },
+       "frontend": {
+           "senior": [person1]
+       }
+   }
+
+   # Serialize - automatically handles nested structure
+   data = team.serialize()
+
+   # Deserialize - all nested objects are automatically registered
+   new_team = Team()
+   registry = ObjectRegistry()
+   registry.register(new_team, object_id="team1")
+   new_team.deserialize(data, registry=registry)
+
+   # All nested Person objects are accessible
+   assert new_team.departments["backend"]["senior"][0].name == "Alice"
+
+**Example: List -> Dict -> List -> Serializable**
+
+.. code-block:: python
+
+   @register_serializable
+   class Project(Serializable):
+       def __init__(self):
+           super().__init__()
+           self._id = None
+           self.name = ""
+           # Structure: projects = [{project_name: {phase: [Person, ...]}}]
+           self.projects = []
+           self.add_serializable_fields(["_id", "name", "projects"])
+
+   project_manager = Project()
+   project_manager.projects = [
+       {
+           "project_a": {
+               "phase1": [person1],
+               "phase2": [person2]
+           }
+       },
+       {
+           "project_b": {
+               "phase1": [person1, person2]
+           }
+       }
+   ]
+
+   # Serialize and deserialize work seamlessly
+   data = project_manager.serialize()
+   new_manager = Project()
+   registry = ObjectRegistry()
+   registry.register(new_manager, object_id="manager1")
+   new_manager.deserialize(data, registry=registry)
+
+**Key Features**:
+
+- **Recursive Serialization**: Automatically serializes Serializable objects at any nesting depth
+- **Automatic Registration**: All nested Serializable objects are automatically registered in Phase 1
+- **Method Support**: Methods in nested objects work correctly after deserialization
+- **No Depth Limit**: Supports arbitrary nesting levels (4+ levels tested)
+
+**How It Works**:
+
+1. **Serialization**: The ``_serialize_value()`` method recursively processes nested dicts and lists,
+   automatically serializing any Serializable objects it encounters.
+
+2. **Deserialization Phase 1**: A recursive function ``find_and_register_serializables()`` traverses
+   the nested structure, finds all Serializable objects, creates instances, and registers them
+   in the ObjectRegistry before deserialization begins.
+
+3. **Deserialization Phase 2**: The ``deserialize_item()`` method checks the registry first before
+   creating new objects, ensuring that pre-registered objects are reused and methods can find
+   their owner objects.
+
 Callable Serialization
 -----------------------
 

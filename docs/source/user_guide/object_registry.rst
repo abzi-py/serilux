@@ -179,25 +179,35 @@ ObjectRegistry is tightly integrated with Serilux's two-phase deserialization pr
 Phase 1: Pre-Creation and Registration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-During Phase 1, all Serializable objects in containers (dicts/lists) are pre-created
-and immediately registered in the ObjectRegistry:
+During Phase 1, Serilux recursively scans all container fields (dicts and lists) at any nesting depth,
+pre-creates all Serializable objects found within them, and immediately registers them in the ObjectRegistry.
+
+**Key Features**:
+- **Recursive Processing**: Handles arbitrarily deep nesting (dict -> list -> dict -> Serializable, etc.)
+- **Automatic Registration**: All found objects are registered before deserialization begins
+- **No Depth Limit**: Supports unlimited nesting levels
 
 .. code-block:: python
 
-   # Phase 1: Pre-create and register
-   for key, value in data.items():
-       if isinstance(value, dict):
-           for k, v in value.items():
-               if isinstance(v, dict) and "_type" in v:
-                   # Create instance
-                   attr_class = SerializableRegistry.get_class(v["_type"])
-                   obj = attr_class()
-                   
-                   # Register in registry (CRITICAL: before deserialization)
-                   object_id = v.get("_id") or k
-                   registry.register(obj, object_id=object_id)
-                   
-                   pre_created[key][k] = obj
+   # Phase 1: Recursively find and register all Serializable objects
+   def find_and_register_serializables(container, registry):
+       if isinstance(container, dict):
+           if "_type" in container and container.get("_type") != "callable":
+               # This is a Serializable object
+               attr_class = SerializableRegistry.get_class(container["_type"])
+               obj = attr_class()
+               object_id = container.get("_id")
+               if object_id:
+                   registry.register(obj, object_id=object_id)  # Register immediately
+               return obj
+           else:
+               # Regular dict - recursively process values
+               return {k: find_and_register_serializables(v, registry) 
+                      for k, v in container.items()}
+       elif isinstance(container, list):
+           # List - recursively process items
+           return [find_and_register_serializables(item, registry) 
+                  for item in container]
 
 **Why Register Before Deserialization?**
 
@@ -241,6 +251,61 @@ their owner objects:
    T6      Phase 2: Continue deserializing Handler's other fields
 
 This ensures methods can always find their owner objects, regardless of deserialization order.
+
+Automatic Registration Improvements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Recent Enhancement**: Single object fields (not in containers) are now automatically registered
+during Phase 2, immediately after creation. This means:
+
+- **Container objects**: Registered in Phase 1 (before deserialization)
+- **Single object fields**: Registered in Phase 2 (immediately after creation, before recursive deserialization)
+- **Root objects**: Must be manually registered (as they are created by the user)
+
+This improvement ensures that methods in nested objects (even those not in containers) can correctly
+find their owner objects during deserialization.
+
+**Example**:
+
+.. code-block:: python
+
+   @register_serializable
+   class Address(Serializable):
+       def __init__(self):
+           super().__init__()
+           self._id = None
+           self.handler = self.process_address  # Method field
+           self.add_serializable_fields(["_id", "handler"])
+       
+       def process_address(self, data):
+           return f"Address: {data}"
+
+   @register_serializable
+   class Person(Serializable):
+       def __init__(self):
+           super().__init__()
+           self._id = None
+           self.address = None  # Single object field (not in container)
+           self.add_serializable_fields(["_id", "address"])
+
+   person = Person()
+   person._id = "person1"
+   address = Address()
+   address._id = "addr1"
+   person.address = address
+
+   # Serialize
+   data = person.serialize()
+
+   # Deserialize
+   new_person = Person()
+   registry = ObjectRegistry()
+   registry.register(new_person, object_id="person1")  # Root object: manual registration
+   new_person.deserialize(data, registry=registry)
+
+   # Address is automatically registered in Phase 2, so its method works!
+   assert new_person.address.handler("test") == "Address: test"
+   assert registry.find_by_id("addr1") is not None  # Address was registered
 
 .. _object-registry-usage:
 
@@ -476,9 +541,11 @@ Let's trace through a complete example:
 Best Practices
 --------------
 
-1. **Always Register Before Deserialization**
-   - Register objects in the registry before calling ``deserialize()``
-   - Or let Serilux handle it automatically during Phase 1
+1. **Register Root Objects**
+   - Register root objects (the object you're deserializing) in the registry before calling ``deserialize()``
+   - Nested objects in containers are automatically registered in Phase 1 (recursively, at any depth)
+   - Single object fields are automatically registered in Phase 2 (immediately after creation)
+   - Only root objects require manual registration
 
 2. **Use Consistent Object IDs**
    - Use the same ID format throughout your application

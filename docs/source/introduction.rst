@@ -15,7 +15,9 @@ Key Features
 - **Automatic Type Registration**: Classes are automatically registered for deserialization
 - **Type Safety**: Built-in validation ensures objects can be properly deserialized
 - **Nested Objects**: Automatically handles nested Serializable objects, lists, and dictionaries
+- **Deeply Nested Containers**: Supports arbitrarily deep nesting (dict -> list -> dict -> Serializable, etc.)
 - **Callable Serialization**: Full support for serializing functions, methods, and lambda expressions
+- **Automatic Object Registration**: Nested objects are automatically registered for method deserialization
 - **Security**: Strict mode prevents deserialization of unknown fields
 - **Zero Dependencies**: Pure Python with no external dependencies
 
