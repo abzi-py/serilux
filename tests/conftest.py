@@ -2,7 +2,15 @@
 Pytest configuration and fixtures for Serilux tests
 """
 
-import pytest
+import sys
+from pathlib import Path
+
+# Add project root to Python path so tests can import serilux
+project_root = Path(__file__).parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+import pytest  # noqa: E402
 
 
 @pytest.fixture
