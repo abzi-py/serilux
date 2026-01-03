@@ -4,6 +4,8 @@
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Documentation](https://readthedocs.org/projects/serilux/badge/?version=latest)](https://serilux.readthedocs.io)
+[![CI](https://github.com/lzjever/serilux/workflows/CI/badge.svg)](https://github.com/lzjever/serilux/actions)
+[![codecov](https://codecov.io/gh/lzjever/serilux/branch/main/graph/badge.svg)](https://codecov.io/gh/lzjever/serilux)
 
 **Serilux** is a powerful, flexible serialization framework for Python objects. With its intuitive API and automatic type registration, you can easily serialize and deserialize complex object hierarchies with minimal code.
 
