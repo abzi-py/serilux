@@ -137,9 +137,7 @@ def validate_serializable_tree(obj: "Serializable", visited: Optional[set] = Non
         # Enhance error message with object information
         obj_class = type(obj).__name__
         obj_repr = repr(obj) if hasattr(obj, "__repr__") else f"{obj_class} instance"
-        raise TypeError(
-            f"Found non-constructable Serializable object: {obj_repr}\n" f"{str(e)}"
-        ) from e
+        raise TypeError(f"Found non-constructable Serializable object: {obj_repr}\n{str(e)}") from e
 
     # Recursively check all Serializable fields
     if hasattr(obj, "fields_to_serialize"):
